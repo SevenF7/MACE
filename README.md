@@ -1,10 +1,8 @@
 # MACE
 
-Implementation of **MACE: Securing LLM-Based Agent Service Compositions through Content-Aware Temporal Graph Anomaly Detection**.
+Code for **MACE: Securing LLM-Based Agent Service Compositions through Content-Aware Temporal Graph Anomaly Detection**.
 
-MACE scores every message (invocation) exchanged between LLM agent services as an edge of a directed temporal graph. It combines a temporal graph attention backbone with direction-aware dual-branch aggregation, an intra-batch relational adapter (IBRA) and a content-aware edge decoder that conditions each score on the embedding of the message under test. Agent-level scores are read out from edge scores.
-
-Some identifiers in the code (for example `LAMD`, `OHD-TGN`, `DIR-TGN`) are internal names from earlier development; they refer to the same model.
+MACE scores each message between LLM agent services as an edge of a directed temporal graph, using a temporal graph attention backbone with direction-aware dual-branch aggregation, an intra-batch relational adapter (IBRA) and a content-aware edge decoder.
 
 ## Requirements
 
@@ -67,14 +65,8 @@ python eval_lamd_agent_auroc.py --data <name> --prefix mace --induct 0.2 \
     --use_memory --edge_aware_decoder
 ```
 
-The two evaluation scripts rebuild the full architecture (dual branches and orientation code enabled); `--use_memory`, `--edge_aware_decoder` and `--node_embedding` must match the trained checkpoint. The agent-level protocol of the paper uses an inductive node split with `--induct 0.2`.
-
-Run each script with `--help` for all options.
+`--use_memory`, `--edge_aware_decoder` and `--node_embedding` must match the trained checkpoint. The agent-level results use an inductive node split (`--induct 0.2`).
 
 ## License
 
-No license is granted at this time; all rights are reserved by the authors. Please contact the authors for any use beyond reviewing the code.
-
-## Citation
-
-Citation information will be added after the paper is published.
+All rights reserved.

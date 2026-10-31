@@ -93,7 +93,7 @@ class TGN(torch.nn.Module):
     self.embedding_module_type = embedding_module_type
     self.one_hot_dir = one_hot_dir
     self.dir_gnn = dir_gnn
-    # OHD-TGN: learn one embedding per edge direction and add to edge features (paper: sum to ê_ij)
+    # Orientation code: learn one embedding per edge direction and add it to the edge features
     if one_hot_dir:
       self.direction_encoder = torch.nn.Linear(1, self.n_edge_features).to(device)
     else:
@@ -116,7 +116,7 @@ class TGN(torch.nn.Module):
                                                  n_neighbors=self.n_neighbors,
                                                  direction_encoder=self.direction_encoder)
 
-    # DIR-TGN: second GNN for incoming edges and fusion layer (z = alpha*z_out + (1-alpha)*z_in)
+    # Dual-branch attention: second branch for incoming edges and fusion layer (z = alpha*z_out + (1-alpha)*z_in)
     if dir_gnn:
       self.embedding_module_rev = get_embedding_module(module_type=embedding_module_type,
                                                        node_features=self.node_raw_features,
@@ -206,7 +206,7 @@ class TGN(torch.nn.Module):
       time_diffs = torch.cat([source_time_diffs, destination_time_diffs, negative_time_diffs],
                              dim=0)
 
-    # Compute the embeddings using the embedding module (DIR-TGN: two paths and fuse)
+    # Compute the embeddings using the embedding module (dual-branch attention: two paths and fuse)
     if self.dir_gnn and self.embedding_module_rev is not None:
       node_emb_out = self.embedding_module.compute_embedding(memory=memory,
                                                              source_nodes=nodes,

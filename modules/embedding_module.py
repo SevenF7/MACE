@@ -72,13 +72,13 @@ class GraphEmbedding(EmbeddingModule):
 
     self.use_memory = use_memory
     self.device = device
-    self.direction_encoder = direction_encoder  # OHD-TGN: add direction to edge features when present
+    self.direction_encoder = direction_encoder  # orientation code: add direction to edge features when present
 
   def compute_embedding(self, memory, source_nodes, timestamps, n_layers, n_neighbors=20, time_diffs=None,
                         use_time_proj=True, direction_filter=None):
     """Recursive implementation of curr_layers temporal graph attention layers.
 
-    direction_filter: None | 'out' | 'in'. For DIR-TGN: 'out' keeps only outgoing edges (current node is source),
+    direction_filter: None | 'out' | 'in'. For dual-branch attention: 'out' keeps only outgoing edges (current node is source),
     'in' keeps only incoming. None = use all edges (default).
     """
 
@@ -110,7 +110,7 @@ class GraphEmbedding(EmbeddingModule):
         neighbors, edge_idxs, edge_times = result
         src_indicator = None
 
-      # DIR-TGN: keep only out-edges or in-edges and pad to n_neighbors
+      # Dual-branch attention: keep only out-edges or in-edges and pad to n_neighbors
       if direction_filter is not None and src_indicator is not None:
         batch_size = neighbors.shape[0]
         effective_n = neighbors.shape[1]
@@ -151,7 +151,7 @@ class GraphEmbedding(EmbeddingModule):
       edge_time_embeddings = self.time_encoder(edge_deltas_torch)
 
       edge_features = self.edge_features[edge_idxs, :]
-      # OHD-TGN: add learned direction encoding to edge features (sum to ê_ij)
+      # Orientation code: add the learned direction encoding to the edge features
       if self.direction_encoder is not None and src_indicator is not None and direction_filter is None:
         src_indicator_torch = torch.from_numpy(src_indicator).float().to(self.device).unsqueeze(-1)
         edge_features = edge_features + self.direction_encoder(src_indicator_torch)

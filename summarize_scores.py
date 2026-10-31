@@ -46,8 +46,8 @@ def main():
             fh.write(f"{r['method']},{r['dataset']}," +
                      ",".join(f"{r.get(c, float('nan')):.6f}" for c in cols) + "\n")
 
-    lines = ["# 统一主表（Path A + chain 切分：train=chain0-3 / val=chain4 / test=chain5）", "",
-             "所有方法共用同一份 `data/ml_{dataset}.csv` 与同一测试集；指标由 `utils/edge_metrics.py` 统一计算。", ""]
+    lines = ["# Main results (chain split: train = chains 0-3, val = chain 4, test = chain 5)", "",
+             "All methods use the same `data/ml_{dataset}.csv` and test chain; metrics are computed by `utils/edge_metrics.py`.", ""]
     hdr = "| dataset | method | AUC | AP | F1 | Prec | Rec | P@100 | R@100 | Latency | n_pos |"
     lines += [hdr, "|" + "---|" * 11]
     for ds in datasets:
@@ -58,7 +58,7 @@ def main():
             lines.append(f"| {ds} | {m} | {r['auc']:.4f} | {r['ap']:.4f} | {r['f1']:.4f} | "
                          f"{r['precision']:.4f} | {r['recall']:.4f} | {r['P@100']:.4f} | "
                          f"{r['R@100']:.4f} | {r['latency']} | {r['n_pos']} |")
-    lines += ["", "*（Latency = 按时间序首个被正确标记的恶意边的序号，越小越快；-1 表示全未命中）*"]
+    lines += ["", "*Latency: test-order index of the first correctly flagged malicious edge; -1 if none is flagged.*"]
     open(a.out, "w").write("\n".join(lines) + "\n")
     print("\n".join(lines))
     print(f"\n[summarize_scores] {len(rows)} rows -> results/main_table.csv, {a.out}")

@@ -138,7 +138,7 @@ def get_neighbor_finder(data, uniform, max_node_idx=None, use_direction=False):
   Build temporal neighbor finder from data.
   use_direction: if True, store and return edge direction (src_indicator) per neighbor:
     True = current node is source (outgoing edge), False = current node is destination (incoming).
-    Required for OHD-TGN / DIR-TGN (phase 0: prepare direction info). Default False keeps original behavior.
+    Required by the orientation code and the dual-branch attention. Default False keeps undirected neighbours.
   """
   max_node_idx = max(data.sources.max(), data.destinations.max()) if max_node_idx is None else max_node_idx
   adj_list = [[] for _ in range(max_node_idx + 1)]

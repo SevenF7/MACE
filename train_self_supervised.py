@@ -66,11 +66,11 @@ parser.add_argument('--use_source_embedding_in_message', action='store_true',
 parser.add_argument('--dyrep', action='store_true',
                     help='Whether to run the dyrep model')
 parser.add_argument('--use_direction', action='store_true',
-                    help='[Phase 0] Store and use edge direction (src_indicator) in neighbor finder for OHD-TGN/DIR-TGN. Default: off, original undirected neighbor behavior.')
+                    help='Store edge direction in the neighbour finder (enabled by --one_hot_dir and --dir_gnn).')
 parser.add_argument('--one_hot_dir', action='store_true',
-                    help='[Phase 1 OHD-TGN] Add learned direction encoding to edge features (sum to ê_ij). Implies --use_direction. Default: off.')
+                    help='Add a learned orientation code to neighbour edge features. Implies --use_direction.')
 parser.add_argument('--dir_gnn', action='store_true',
-                    help='[Phase 2 DIR-TGN] Two GNNs for out-/in-edges and fuse (z = alpha*z_out + (1-alpha)*z_in). Implies --use_direction. Default: off.')
+                    help='Use separate attention branches for outgoing and incoming edges, fused by a learned gate. Implies --use_direction.')
 parser.add_argument('--no_transformer', action='store_true',
                     help='Ablation: skip the TransformerEncoderLayer on node embeddings (identity path).')
 parser.add_argument('--conv_neg', action='store_true',
@@ -143,7 +143,7 @@ new_node_test_data = get_data(DATA, induct, n,
                               different_new_nodes_between_val_and_test=args.different_new_nodes, randomize_features=args.randomize_features, logger = logger,
                               val_time=args.val_time, test_time=args.test_time)
 
-# Direction: OHD-TGN and DIR-TGN require direction in neighbor finder
+# Direction: the orientation code and dual-branch attention require direction in the neighbour finder
 use_direction_flag = args.use_direction or args.one_hot_dir or args.dir_gnn
 # Initialize training neighbor finder to retrieve temporal graph
 train_ngh_finder = get_neighbor_finder(train_data, args.uniform, use_direction=use_direction_flag)
